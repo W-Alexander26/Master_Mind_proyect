@@ -1,6 +1,6 @@
 from colorama import Fore
 import random 
-
+import itertools 
 
 
 # class tablero:
@@ -47,7 +47,7 @@ class Game:
         
     def adivina_codigo(self):
         while True:
-            adivinanza = input("Ingresa tu adivanza : ").upper().split()
+            adivinanza = input("Ingresa tu adivinanza : ").upper().split()
             if len(adivinanza) != tamano_codigo:
                 print(f"Intenta adivinar los {tamano_codigo} colores")
                 continue
@@ -64,15 +64,34 @@ class Game:
         return posicion_correcta, posicion_incorrecta     
     
               
-    # def crea_codigo_jugador(self):
-    #     print("Ingrese su combinación de colores: verde, amarillo, rojo ó azúl.")
-    #     combinacion_de_colores = input().lower()
+    def crea_codigo_jugador(self):
+        print("Ingrese su combinación de colores: verde(g), amarillo(y), rojo(r) ó azúl(b).")
+        self.codigo = input().upper().split()
+        if len(self.codigo) != tamano_codigo or not all(color in colores for color in self.codigo):
+           print(f"Combinacion invalida. Utiliza los { tamano_codigo} colores validos.")
+           return self.crea_codigo_jugador()
+       
+        print("La computudora intentará adivinar el código.")
+        posibles_combinaciones = ["R", "B", "G", "Y"]
+        intento_realizados = []
         
-    #     #meter funcion que adivina la computadora sobre nuestra secuencia.
-    #     if combinacion_de_colores == self.secuencia:
+        for intento in range(1, intentos + 1):
+            adivinanza = random.choices(posibles_combinaciones)
+            posibles_combinaciones.remove(adivinanza)
             
-    #         print("estoy aquí vago")
-        
+            print(f"Intento {intento}: {' '.join(adivinanza)}")
+            posicion_correcta, posicion_incorrecta = self.procesar_adivinanza(adivinanza,self.codigo)
+            print(f"Posiciones correcta {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
+            
+            if posicion_correcta == tamano_codigo:
+                print("La computadora adivinó el código")
+                break
+        else:
+            print("Computadora pierde")
+        print(f"El código era {' '.join(self.codigo)}")
+            
+            
+                       
     def crea_codigo_computadora(self):
         print("La maquina creo el código secreto")
         self.generador_codigo_random()

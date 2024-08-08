@@ -1,4 +1,9 @@
 # Master_Mind_proyect
+#Se utilizo el paquete de colores colorama
+#Tambien se importo choices de la libreria random
+#Tambien se utilizo product de la libreria itertools para que la maquina escogiera alguna de las estrategias
+ para adivinar el codigo.
+
 #Clase Juego
 Se encarga de emular el juego conteniendo las demás clases que permiten el correcto funcionamiento del juego.
 Así también se utilizan las instancias "self" para utilizar las variables necesarias como el tamaño del codigo, 

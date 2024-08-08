@@ -2,6 +2,7 @@ from colorama import Fore, Style, init
 from codigo import Codigo
 from jugador import Jugador
 import random
+from itertools import product
 """Importamos las clases necesarias para utilizar en el archivo game.py."""
 
 init(autoreset=True)
@@ -73,11 +74,16 @@ class Juego:
         self.codigo.codigo = codigo_jugador
         print("La computadora intentará adivinar el código.")
         
-        posibles_combinaciones = [[color for color in colores] for _ in range(tamano_codigo)]
+        posibles_combinaciones = [''.join(p) for p in product(colores, repeat=4)]
         intentos_realizados = []
         
         for intento in range(1, intentos + 1):
-            adivinanza = [random.choice(posibles_combinaciones[i]) for i in range(tamano_codigo)]
+            estrategia = random.choice(['aleatoria', 'fuerza_bruta'])
+            if estrategia == 'aleatoria':
+                adivinanza = [random.choice(colores) for _ in range(tamano_codigo)]
+            elif estrategia == 'fuerza_bruta':
+                adivinanza = list(posibles_combinaciones.pop(0))
+            
             if adivinanza in intentos_realizados:
                 continue
             intentos_realizados.append(adivinanza)

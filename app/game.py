@@ -2,18 +2,26 @@ from colorama import Fore, Style, init
 from codigo import Codigo
 from jugador import Jugador
 import random
+"""Importamos las clases necesarias para utilizar en el archivo game.py."""
 
 init(autoreset=True)
 
+
+colores = ["R", "G", "B", "Y"]
 intentos = 12
 tamano_codigo = 4
-colores = ["R", "G", "B", "Y"]
 
 color_map = {
     "R": Fore.RED + 'O' + Style.RESET_ALL,
     "G": Fore.GREEN + 'O' + Style.RESET_ALL,
     "B": Fore.BLUE + 'O' + Style.RESET_ALL,
     "Y": Fore.YELLOW + 'O' + Style.RESET_ALL
+}
+
+feedback_map = {
+    "G": Fore.GREEN + '●' + Style.RESET_ALL,
+    "O": Fore.LIGHTYELLOW_EX + '●' + Style.RESET_ALL,
+    "W": Fore.WHITE + '●' + Style.RESET_ALL
 }
 
 class Juego:
@@ -42,13 +50,13 @@ class Juego:
         for intento in range(1, intentos + 1):
             print(f"Intento {intento}:")
             adivinanza = self.jugador.adivina_codigo()
-            posicion_correcta, posicion_incorrecta = self.codigo.procesar_adivinanza(adivinanza)
+            retroalimentacion = self.codigo.procesar_adivinanza(adivinanza)
             adivinanza_colored = [color_map[color] for color in adivinanza]
-            print(f"Adivinanza: {' '.join(adivinanza_colored)}")
-            if posicion_correcta == tamano_codigo:
+            retroalimentacion_colored = [feedback_map[color] for color in retroalimentacion]
+            print(f"Adivinanza: {' '.join(adivinanza_colored)} Retroalimentación: {' '.join(retroalimentacion_colored)}")
+            if all(color == "G" for color in retroalimentacion):
                 print("¡Felicidades, adivinaste el código!")
                 break
-            print(f"Posiciones correctas: {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
         else:
             print("Gana la PC.")
         codigo_colored = [color_map[color] for color in codigo]
@@ -68,14 +76,20 @@ class Juego:
                 continue
             intentos_realizados.append(adivinanza)
             adivinanza_colored = [color_map[color] for color in adivinanza]
-            print(f"Intento {intento}: {' '.join(adivinanza_colored)}")
-            posicion_correcta, posicion_incorrecta = self.codigo.procesar_adivinanza(adivinanza)
-            print(f"Posiciones correctas: {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
-            
-            if posicion_correcta == tamano_codigo:
+            retroalimentacion = self.codigo.procesar_adivinanza(adivinanza)
+            retroalimentacion_colored = [feedback_map[color] for color in retroalimentacion]
+            print(f"Intento {intento}: {' '.join(adivinanza_colored)} Retroalimentación: {' '.join(retroalimentacion_colored)}")
+            if all(color == "G" for color in retroalimentacion):
                 print("La computadora adivinó el código.")
                 break
         else:
             print("La computadora pierde.")
         codigo_jugador_colored = [color_map[color] for color in codigo_jugador]
         print(f"El código era: {' '.join(codigo_jugador_colored)}")
+        
+def main():
+    juego = Juego()
+    juego.elegir_modo()
+
+if __name__ == "__main__":
+    main()

@@ -6,11 +6,12 @@ import random
 
 init(autoreset=True)
 
-
+"""Creamos la variables de los colores, intentos y tamaño del codigo aplicando al resto del codigo"""
 colores = ["R", "G", "B", "Y"]
 intentos = 12
 tamano_codigo = 4
 
+"""creamos un diccionario que contiene el color que necesitas al usar la letra correspondiente"""
 color_map = {
     "R": Fore.RED + 'O' + Style.RESET_ALL,
     "G": Fore.GREEN + 'O' + Style.RESET_ALL,
@@ -18,17 +19,20 @@ color_map = {
     "Y": Fore.YELLOW + 'O' + Style.RESET_ALL
 }
 
+"""Creamos otro diccionario que nos va a brindar la retroalimentacion sobre la secuencia de colores"""
 feedback_map = {
     "G": Fore.GREEN + '●' + Style.RESET_ALL,
     "O": Fore.LIGHTYELLOW_EX + '●' + Style.RESET_ALL,
     "W": Fore.WHITE + '●' + Style.RESET_ALL
 }
 
+"""Creamos una clase que va a contener la ejecucion del juego,"""
 class Juego:
     def __init__(self):
         self.codigo = Codigo()
         self.jugador = Jugador()
 
+    """creamos la funcion que nos va a preguntar cual modo de juego nos gustaria jugar"""
     def elegir_modo(self):
         while True:
             print('Hola, bienvenido a MasterMind. Escoge un modo de juego: "Adivinador" o "Creador de Código"')
@@ -42,6 +46,7 @@ class Juego:
                     self.crea_codigo_jugador()
                 break
 
+    """se crea la funcion correspondiente para que la computadora adivine el codigo generador por el jugador"""
     def crea_codigo_computadora(self):
         print("La máquina creó el código secreto.")
         self.codigo.generar_codigo_random()
@@ -62,6 +67,7 @@ class Juego:
         codigo_colored = [color_map[color] for color in codigo]
         print(f"El código fue: {' '.join(codigo_colored)}")
 
+    """Se crea la funcion que hace al jugador adivinar el codigo de colores generador por la computadora"""
     def crea_codigo_jugador(self):
         codigo_jugador = self.jugador.crea_codigo_jugador()
         self.codigo.codigo = codigo_jugador
@@ -87,6 +93,7 @@ class Juego:
         codigo_jugador_colored = [color_map[color] for color in codigo_jugador]
         print(f"El código era: {' '.join(codigo_jugador_colored)}")
         
+"""Funcion para que se ejecute el juego junto con sus instancias"""
 def main():
     juego = Juego()
     juego.elegir_modo()

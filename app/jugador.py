@@ -1,6 +1,8 @@
 colores = ["R", "G", "B", "Y"]
 tamano_codigo = 4
 
+"""Creamos la clase jugador que contiene la funcion que nos permite adivinar
+el codigo de la computadora y la creacion de nuestra secuencia de colores para que la computadora la adivine"""
 class Jugador:
     def adivina_codigo(self):
         while True:

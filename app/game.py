@@ -1,35 +1,29 @@
-from colorama import Fore
-import random 
-import itertools 
+from colorama import Fore, Style, init
+from codigo import Codigo
+from jugador import Jugador
+import random
 
+init(autoreset=True)
 
-# class tablero:
-#     def table():
-#         tabla = [["O" for i in range(0,4)] for _ in range(0,12)]
-#         for i in tabla:
-#             print("  ".join(i))
-#             # return ("  ".join(i))
-    
-# codigo_aleatorio = (Fore.BLUE + " O "), (Fore.RED + " O " ), (Fore.YELLOW + " O "), (Fore.GREEN + " O "), (Fore.RESET )
-# print(tablero.table())
-# print(''.join(codigo_aleatorio))
-
-
-colores = ["R", "G", "B", "Y"]
 intentos = 12
 tamano_codigo = 4
-    
-    
-class Game:
-    #Juego, dividido en sus respectivas clases y métodos.
+colores = ["R", "G", "B", "Y"]
+
+color_map = {
+    "R": Fore.RED + 'O' + Style.RESET_ALL,
+    "G": Fore.GREEN + 'O' + Style.RESET_ALL,
+    "B": Fore.BLUE + 'O' + Style.RESET_ALL,
+    "Y": Fore.YELLOW + 'O' + Style.RESET_ALL
+}
+
+class Juego:
     def __init__(self):
-        self.code = []
-        
-    
-        #Declaramos variables privadas.    
-    def elegirModo(self):
+        self.codigo = Codigo()
+        self.jugador = Jugador()
+
+    def elegir_modo(self):
         while True:
-            print(f'Hola, Bienvenido a MasterMind. Escoge un Modo de Juego "Adivinador ó Creador de Código"')
+            print('Hola, bienvenido a MasterMind. Escoge un modo de juego: "Adivinador" o "Creador de Código"')
             respuesta = input().strip().lower()
             if respuesta not in ('adivinador', 'creador de codigo'):
                 print("Agrega una respuesta correcta.")
@@ -39,80 +33,49 @@ class Game:
                 elif respuesta == 'creador de codigo':
                     self.crea_codigo_jugador()
                 break
-    
-    
-    
-    def generador_codigo_random(self):
-        self.code = [random.choice(colores) for _ in range(tamano_codigo)]       
-        
-    def adivina_codigo(self):
-        while True:
-            adivinanza = input("Ingresa tu adivinanza : ").upper().split()
-            if len(adivinanza) != tamano_codigo:
-                print(f"Intenta adivinar los {tamano_codigo} colores")
-                continue
-            if all(color in colores for color in adivinanza):
-                return adivinanza
-            else:
-                print("Colores invalidos. Intentalo de nuevo")
-                
-    
-    def procesar_adivinanza(self,adivinanza,codigo):
-        posicion_correcta = sum(1 for a, c in zip(adivinanza,codigo) if a == c)  
-        totales_correctas = sum((adivinanza.count(color) if adivinanza.count(color)<= codigo.count(color) else codigo.count(color)) for color in colores)  
-        posicion_incorrecta = totales_correctas - posicion_correcta
-        return posicion_correcta, posicion_incorrecta     
-    
-              
-    def crea_codigo_jugador(self):
-        print("Ingrese su combinación de colores: verde(g), amarillo(y), rojo(r) ó azúl(b).")
-        self.codigo = input().upper().split()
-        if len(self.codigo) != tamano_codigo or not all(color in colores for color in self.codigo):
-           print(f"Combinacion invalida. Utiliza los { tamano_codigo} colores validos.")
-           return self.crea_codigo_jugador()
-       
-        print("La computudora intentará adivinar el código.")
-        posibles_combinaciones = ["R", "B", "G", "Y"]
-        intento_realizados = []
-        
-        for intento in range(1, intentos + 1):
-            adivinanza = random.choices(posibles_combinaciones)
-            posibles_combinaciones.remove(adivinanza)
-            
-            print(f"Intento {intento}: {' '.join(adivinanza)}")
-            posicion_correcta, posicion_incorrecta = self.procesar_adivinanza(adivinanza,self.codigo)
-            print(f"Posiciones correcta {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
-            
-            if posicion_correcta == tamano_codigo:
-                print("La computadora adivinó el código")
-                break
-        else:
-            print("Computadora pierde")
-        print(f"El código era {' '.join(self.codigo)}")
-            
-            
-                       
+
     def crea_codigo_computadora(self):
-        print("La maquina creo el código secreto")
-        self.generador_codigo_random()
-        codigo= self.code.copy()
+        print("La máquina creó el código secreto.")
+        self.codigo.generar_codigo_random()
+        codigo = self.codigo.codigo
         print("Trata de adivinar el código!")
         for intento in range(1, intentos + 1):
             print(f"Intento {intento}:")
-            adivinanza = self.adivina_codigo()
-            posicion_correcta, posicion_incorrecta = self.procesar_adivinanza(adivinanza,codigo)
+            adivinanza = self.jugador.adivina_codigo()
+            posicion_correcta, posicion_incorrecta = self.codigo.procesar_adivinanza(adivinanza)
+            adivinanza_colored = [color_map[color] for color in adivinanza]
+            print(f"Adivinanza: {' '.join(adivinanza_colored)}")
             if posicion_correcta == tamano_codigo:
-                print("Felicidadades, adivinaste el codigo")
+                print("¡Felicidades, adivinaste el código!")
                 break
-            print(f"posiciones correctas {posicion_correcta} | posiciones incorrecta {posicion_incorrecta}")
+            print(f"Posiciones correctas: {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
         else:
-            print("Gana la pc")
-        print(f"El codigo fue: {' '.join(codigo)}")
-         
-def main():
-    Juego = Game()
-    Juego.elegirModo()
+            print("Gana la PC.")
+        codigo_colored = [color_map[color] for color in codigo]
+        print(f"El código fue: {' '.join(codigo_colored)}")
 
-if __name__ == "__main__":
-    # Inicializador del archivo.
-    main()
+    def crea_codigo_jugador(self):
+        codigo_jugador = self.jugador.crea_codigo_jugador()
+        self.codigo.codigo = codigo_jugador
+        print("La computadora intentará adivinar el código.")
+        
+        posibles_combinaciones = [[color for color in colores] for _ in range(tamano_codigo)]
+        intentos_realizados = []
+        
+        for intento in range(1, intentos + 1):
+            adivinanza = [random.choice(posibles_combinaciones[i]) for i in range(tamano_codigo)]
+            if adivinanza in intentos_realizados:
+                continue
+            intentos_realizados.append(adivinanza)
+            adivinanza_colored = [color_map[color] for color in adivinanza]
+            print(f"Intento {intento}: {' '.join(adivinanza_colored)}")
+            posicion_correcta, posicion_incorrecta = self.codigo.procesar_adivinanza(adivinanza)
+            print(f"Posiciones correctas: {posicion_correcta} | Posiciones incorrectas: {posicion_incorrecta}")
+            
+            if posicion_correcta == tamano_codigo:
+                print("La computadora adivinó el código.")
+                break
+        else:
+            print("La computadora pierde.")
+        codigo_jugador_colored = [color_map[color] for color in codigo_jugador]
+        print(f"El código era: {' '.join(codigo_jugador_colored)}")
